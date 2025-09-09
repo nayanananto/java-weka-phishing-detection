@@ -8,6 +8,7 @@ import weka.filters.unsupervised.attribute.Reorder;
 import weka.filters.unsupervised.attribute.Discretize;
 import weka.associations.Apriori;
 import weka.core.SelectedTag;
+import java.util.*;
 
 public final class RulesModule {
     private RulesModule() {}
@@ -173,22 +174,20 @@ public final class RulesModule {
     }
 
     /**
-     * Mines general association rules (feature relationships) - OPTIMIZED FOR SPEED
+     * Mines general association rules (feature relationships) with BALANCED UNDERSAMPLING
      * Format: feature_pattern => other_feature_pattern
      */
     private static void mineGeneralAssociationRules(Instances data) throws Exception {
-        System.out.println("\n=== GENERAL ASSOCIATION RULES (Fast Mode) ===");
-        System.out.println("Mining relationships between features (class attribute removed)");
+        System.out.println("\n=== GENERAL ASSOCIATION RULES (Balanced Sampling Mode) ===");
+        System.out.println("Mining relationships between features (class attribute will be removed)");
         
         Instances generalData = new Instances(data);
         
-        // OPTIMIZATION 1: Sample data if too large (speed up processing)
+        // OPTIMIZATION 1: Balanced undersampling if dataset is large
         if (generalData.numInstances() > 5000) {
-            generalData.randomize(new java.util.Random(Config.SEED));
-            int sampleSize = Math.min(3000, generalData.numInstances()); // Use max 3000 instances
-            Instances sampledData = new Instances(generalData, 0, sampleSize);
-            generalData = sampledData;
-            System.out.println("Sampled " + sampleSize + " instances for faster processing");
+            int targetSize = 3000;
+            generalData = balancedUndersample(generalData, targetSize);
+            System.out.println("Applied balanced undersampling: " + generalData.numInstances() + " instances");
         }
         
         // Remove class attribute for general rule mining
@@ -308,6 +307,86 @@ public final class RulesModule {
             System.out.println("\n⚠️  General Association Rules: Using fallback quick mode");
             quickFallbackRules(discretizedGeneral);
         }
+    }
+    
+    /**
+     * Performs balanced undersampling to maintain class distribution
+     * @param data Original dataset with class attribute
+     * @param targetSize Target number of total instances after sampling
+     * @return Balanced undersampled dataset
+     */
+    private static Instances balancedUndersample(Instances data, int targetSize) throws Exception {
+        System.out.println("Performing balanced undersampling...");
+        
+        // Count instances per class
+        Map<String, List<Integer>> classInstances = new HashMap<>();
+        
+        for (int i = 0; i < data.numInstances(); i++) {
+            String className = data.instance(i).stringValue(data.classIndex());
+            classInstances.computeIfAbsent(className, k -> new ArrayList<>()).add(i);
+        }
+        
+        // Print original class distribution
+        System.out.println("Original class distribution:");
+        int totalOriginal = 0;
+        for (Map.Entry<String, List<Integer>> entry : classInstances.entrySet()) {
+            int count = entry.getValue().size();
+            totalOriginal += count;
+            System.out.printf("  %s: %d instances (%.1f%%)\n", 
+                            entry.getKey(), count, (100.0 * count / data.numInstances()));
+        }
+        
+        // Calculate instances per class for balanced sampling
+        int numClasses = classInstances.size();
+        int instancesPerClass = targetSize / numClasses;
+        
+        System.out.printf("Target: %d total instances, %d per class\n", targetSize, instancesPerClass);
+        
+        // Sample equal number from each class
+        List<Integer> balancedIndices = new ArrayList<>();
+        Random rand = new Random(Config.SEED);
+        
+        for (Map.Entry<String, List<Integer>> entry : classInstances.entrySet()) {
+            String className = entry.getKey();
+            List<Integer> indices = entry.getValue();
+            
+            // Shuffle indices for random sampling
+            Collections.shuffle(indices, rand);
+            
+            // Take minimum of desired count or available instances
+            int takeCount = Math.min(instancesPerClass, indices.size());
+            balancedIndices.addAll(indices.subList(0, takeCount));
+            
+            System.out.printf("  %s: sampled %d/%d instances\n", 
+                            className, takeCount, indices.size());
+        }
+        
+        // Create new dataset with balanced samples
+        Instances balanced = new Instances(data, 0);
+        Collections.shuffle(balancedIndices, rand); // Shuffle final order
+        
+        for (int idx : balancedIndices) {
+            balanced.add(data.instance(idx));
+        }
+        
+        // Set class index
+        balanced.setClassIndex(data.classIndex());
+        
+        // Print final class distribution
+        System.out.println("Balanced class distribution:");
+        Map<String, Integer> finalCounts = new HashMap<>();
+        for (int i = 0; i < balanced.numInstances(); i++) {
+            String className = balanced.instance(i).stringValue(balanced.classIndex());
+            finalCounts.put(className, finalCounts.getOrDefault(className, 0) + 1);
+        }
+        
+        for (Map.Entry<String, Integer> entry : finalCounts.entrySet()) {
+            int count = entry.getValue();
+            System.out.printf("  %s: %d instances (%.1f%%)\n", 
+                            entry.getKey(), count, (100.0 * count / balanced.numInstances()));
+        }
+        
+        return balanced;
     }
     
     /**
