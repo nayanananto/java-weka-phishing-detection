@@ -8,10 +8,7 @@ public class PhishingWeka {
         // (i) Data prep
         Instances raw  = DataPrep.loadCsv(Config.DATASET_PATH);
         Instances data = DataPrep.preprocess(raw);
-        // Optional: write ARFF
-        // DataPrep.saveArff(data, "output/phishing_preproc.arff");
-
-        // (ii) Exploratory analysis (basic) is already printed; add class distribution:
+        
         if (data.classAttribute().isNominal()) {
             int[] dist = data.attributeStats(data.classIndex()).nominalCounts;
             System.out.println("\n=== Class Distribution ===");
