@@ -151,6 +151,7 @@ public final class SupervisedTrainer {
                 
             } catch (Exception model_error) {
                 System.out.println("❌ Error training " + names.get(i) + ": " + model_error.getMessage());
+                System.out.println(" Error training " + names.get(i) + ": " + model_error.getMessage());
                 // Don't print stack trace for known issues like "cannot handle numeric class"
                 if (!model_error.getMessage().contains("Cannot handle numeric class")) {
                     model_error.printStackTrace();
@@ -161,6 +162,7 @@ public final class SupervisedTrainer {
         // Select best model
         if (bestScore == (isClassification ? -1 : Double.MAX_VALUE)) {
             System.out.println("\n⚠️ No valid models found. Using first available model as fallback.");
+            System.out.println("\n No valid models found. Using first available model as fallback.");
             bestIdx = 0;
         }
 
