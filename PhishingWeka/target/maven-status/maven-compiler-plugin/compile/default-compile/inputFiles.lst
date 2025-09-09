@@ -1,7 +1,9 @@
-C:\Users\Admin\Documents\NetBeansProjects\PhishingWeka\src\main\java\org\example\phishingweka\DataPrep.java
-C:\Users\Admin\Documents\NetBeansProjects\PhishingWeka\src\main\java\org\example\phishingweka\SupervisedTrainer.java
-C:\Users\Admin\Documents\NetBeansProjects\PhishingWeka\src\main\java\org\example\phishingweka\ClusterModule.java
-C:\Users\Admin\Documents\NetBeansProjects\PhishingWeka\src\main\java\org\example\phishingweka\RulesModule.java
-C:\Users\Admin\Documents\NetBeansProjects\PhishingWeka\src\main\java\org\example\phishingweka\Config.java
-C:\Users\Admin\Documents\NetBeansProjects\PhishingWeka\src\main\java\org\example\phishingweka\PhishingWeka.java
-C:\Users\Admin\Documents\NetBeansProjects\PhishingWeka\src\main\java\org\example\phishingweka\Utils.java
+C:\Users\Admin\Documents\java-weka-phishing-detection\PhishingWeka\src\main\java\org\example\phishingweka\PhishingWeka.java
+C:\Users\Admin\Documents\java-weka-phishing-detection\PhishingWeka\src\main\java\org\example\phishingweka\Utils.java
+C:\Users\Admin\Documents\java-weka-phishing-detection\PhishingWeka\src\main\java\org\example\phishingweka\ClassDiagnostic.java
+C:\Users\Admin\Documents\java-weka-phishing-detection\PhishingWeka\src\main\java\org\example\phishingweka\Config.java
+C:\Users\Admin\Documents\java-weka-phishing-detection\PhishingWeka\src\main\java\org\example\phishingweka\RulesModule.java
+C:\Users\Admin\Documents\java-weka-phishing-detection\PhishingWeka\src\main\java\org\example\phishingweka\DataPrep.java
+C:\Users\Admin\Documents\java-weka-phishing-detection\PhishingWeka\src\main\java\org\example\phishingweka\UrlFeatureExtractor.java
+C:\Users\Admin\Documents\java-weka-phishing-detection\PhishingWeka\src\main\java\org\example\phishingweka\SupervisedTrainer.java
+C:\Users\Admin\Documents\java-weka-phishing-detection\PhishingWeka\src\main\java\org\example\phishingweka\ClusterModule.java

@@ -1,7 +1,10 @@
 org\example\phishingweka\SupervisedTrainer.class
 org\example\phishingweka\Utils.class
+org\example\phishingweka\UrlFeatureExtractor$UrlFeatures.class
 org\example\phishingweka\PhishingWeka.class
+org\example\phishingweka\UrlFeatureExtractor.class
 org\example\phishingweka\Config.class
 org\example\phishingweka\DataPrep.class
 org\example\phishingweka\RulesModule.class
+org\example\phishingweka\ClassDiagnostic.class
 org\example\phishingweka\ClusterModule.class

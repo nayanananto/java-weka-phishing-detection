@@ -13,6 +13,7 @@ import weka.filters.unsupervised.attribute.Reorder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import weka.filters.unsupervised.attribute.RenameAttribute;
 
 /**
  * Association rule mining:
@@ -61,7 +62,7 @@ public final class RulesModule {
         System.out.println("\n=== CLASS ASSOCIATION RULES (CAR) ===");
 
         // 1) Force class to be 'status' (or 'cls_label') and move to last
-        Instances d = forceStatusAsClass(data);
+        Instances d = forceLabelAsClass(data);
         System.out.printf("Target attribute for CAR: %s (index=%d of %d)\n",
                 d.classAttribute().name(), d.classIndex(), d.numAttributes());
 
@@ -188,28 +189,63 @@ System.out.println(apr.toString());
     // ------------------------------------------------------------------------
 
     /** Choose class by name (status preferred, cls_label fallback) and move it to LAST column. */
-    private static Instances forceStatusAsClass(Instances in) throws Exception {
-        Instances d = new Instances(in);
+    private static Instances forceLabelAsClass(Instances in) throws Exception {
+    Instances d = new Instances(in);
 
-        String className = null;
-        if (d.attribute("status") != null) className = "status";
-        else if (d.attribute("cls_label") != null) className = "cls_label";
+    // 1) Find the label attribute
+    String label = null;
+    String[] candidates = {"status", "cls_label", "label", "class", "target"};
+    for (String c : candidates) if (d.attribute(c) != null) { label = c; break; }
 
-        if (className != null) {
-            ClassAssigner ca = new ClassAssigner();
-//            ca.setClassName(className);
-            ca.setClassIndex("last");
-            ca.setInputFormat(d);
-            d = Filter.useFilter(d, ca);
-        } else {
-            if (d.classIndex() < 0) d.setClassIndex(d.numAttributes() - 1);
-            d = moveClassToLast(d);
+    if (label == null) {
+        // detect by values {phishing, legit/legitimate}
+        for (int i = 0; i < d.numAttributes() && label == null; i++) {
+            Attribute a = d.attribute(i);
+            if (!a.isNominal()) continue;
+            boolean hasPhish = false, hasLegit = false;
+            for (int v = 0; v < a.numValues(); v++) {
+                String val = a.value(v).toLowerCase();
+                if (val.equals("phishing")) hasPhish = true;
+                if (val.equals("legit") || val.equals("legitimate")) hasLegit = true;
+            }
+            if (hasPhish && hasLegit) label = a.name();
         }
-
-        System.out.printf("AFTER ClassAssigner: class=%s @%d of %d\n",
-                d.classAttribute().name(), d.classIndex(), d.numAttributes());
-        return d;
     }
+    if (label == null)
+        throw new IllegalStateException("Could not find class label (status/cls_label or {phishing, legit/legitimate}).");
+
+    // 2) Move that attribute to LAST via Reorder
+    int target1b = d.attribute(label).index() + 1; // 1-based
+    StringBuilder order = new StringBuilder();
+    for (int i = 1; i <= d.numAttributes(); i++) {
+        if (i == target1b) continue;
+        if (order.length() > 0) order.append(",");
+        order.append(i);
+    }
+    order.append(",").append(target1b);
+
+    Reorder ro = new Reorder();
+    ro.setAttributeIndices(order.toString());
+    ro.setInputFormat(d);
+    d = Filter.useFilter(d, ro);
+
+    // 3) Set class to LAST
+    d.setClassIndex(d.numAttributes() - 1);
+
+    // 4) (Optional) rename class to exactly "status" for clarity/reporting
+    if (!d.classAttribute().name().equals("status") && d.attribute("status") == null) {
+        RenameAttribute rn = new RenameAttribute();
+        rn.setAttributeIndices(String.valueOf(d.classIndex() + 1)); // 1-based
+        rn.setReplace("status");
+        rn.setInputFormat(d);
+        d = Filter.useFilter(d, rn);
+        d.setClassIndex(d.numAttributes() - 1);
+    }
+
+    System.out.printf("AFTER forceLabelAsClassStrict: class=%s @%d of %d\n",
+            d.classAttribute().name(), d.classIndex(), d.numAttributes());
+    return d;
+}
 
     /** Keep curated attributes plus the class. */
     private static Instances keepImportantPlusClass(Instances d, String[] names) throws Exception {
