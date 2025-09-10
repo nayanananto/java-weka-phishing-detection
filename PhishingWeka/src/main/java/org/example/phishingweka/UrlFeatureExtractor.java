@@ -64,14 +64,14 @@ public final class UrlFeatureExtractor {
             Attribute newClassAttr = finalData.attribute(originalClassName);
             if (newClassAttr != null) {
                 finalData.setClassIndex(newClassAttr.index());
-                System.out.println("✅ Class index restored: " + originalClassName + " at index " + newClassAttr.index());
+                System.out.println(" Class index restored: " + originalClassName + " at index " + newClassAttr.index());
             } else {
-                System.out.println("⚠️ Could not find class attribute after URL removal!");
+                System.out.println(" Could not find class attribute after URL removal!");
                 // Fallback: assume class is at the end
                 finalData.setClassIndex(finalData.numAttributes() - 1);
             }
         } else {
-            System.out.println("⚠️ No original class index to restore");
+            System.out.println(" No original class index to restore");
         }
         
         System.out.println("URL features extracted successfully!");

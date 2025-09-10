@@ -39,7 +39,7 @@ public final class DataPrep {
 
         // STEP 1: Extract URL features BEFORE removing URL attribute
         data = UrlFeatureExtractor.extractUrlFeatures(data);
-        System.out.println("✅ URL features extracted and original URL removed");
+        System.out.println(" URL features extracted and original URL removed");
         
         // DEBUG: After URL extraction
         printClassDistribution(data, "AFTER URL EXTRACTION");
@@ -48,7 +48,7 @@ public final class DataPrep {
         ReplaceMissingValues rmv = new ReplaceMissingValues();
         rmv.setInputFormat(data);
         data = Filter.useFilter(data, rmv);
-        System.out.println("✅ Missing values replaced");
+        System.out.println(" Missing values replaced");
         
         // DEBUG: After missing value replacement
         printClassDistribution(data, "AFTER MISSING VALUE REPLACEMENT");
@@ -57,7 +57,7 @@ public final class DataPrep {
         RemoveUseless ru = new RemoveUseless();
         ru.setInputFormat(data);
         data = Filter.useFilter(data, ru);
-        System.out.println("✅ Useless attributes removed");
+        System.out.println(" Useless attributes removed");
         
         // DEBUG: After removing useless attributes
         printClassDistribution(data, "AFTER REMOVING USELESS ATTRIBUTES");
@@ -77,7 +77,7 @@ public final class DataPrep {
         System.out.println("Class index: " + data.classIndex());
         
         if (data.classIndex() == -1) {
-            System.out.println("❌ No class attribute set!");
+            System.out.println(" No class attribute set!");
             return;
         }
         
@@ -136,17 +136,17 @@ public final class DataPrep {
                 data = Filter.useFilter(data, numToNom);
                 data.setClassIndex(data.numAttributes() - 1); // Restore class index
                 
-                System.out.println("✅ Class attribute converted to nominal");
+                System.out.println(" Class attribute converted to nominal");
                 System.out.println("New class values:");
                 for (int i = 0; i < data.classAttribute().numValues(); i++) {
                     System.out.println("  [" + i + "] " + data.classAttribute().value(i));
                 }
             } else {
-                System.out.println("⚠️ Too many unique values (" + uniqueValues.size() + ") - might be regression problem");
+                System.out.println(" Too many unique values (" + uniqueValues.size() + ") - might be regression problem");
                 System.out.println("Keeping as numeric - only RandomForest will work");
             }
         } else {
-            System.out.println("✅ Class attribute is already nominal");
+            System.out.println(" Class attribute is already nominal");
             System.out.println("Class values:");
             for (int i = 0; i < data.classAttribute().numValues(); i++) {
                 System.out.println("  [" + i + "] " + data.classAttribute().value(i));
@@ -200,6 +200,6 @@ public final class DataPrep {
         f.getParentFile().mkdirs();
         saver.setFile(f);
         saver.writeBatch();
-        System.out.println("✅ Saved ARFF → " + outPath);
+        System.out.println(" Saved ARFF → " + outPath);
     }
 }

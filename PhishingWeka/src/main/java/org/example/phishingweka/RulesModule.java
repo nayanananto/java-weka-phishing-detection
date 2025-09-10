@@ -369,13 +369,13 @@ System.out.println(apr.toString());
 
             String out = ap.toString();
             if (hasAnyRule(out)) {
-                System.out.printf("✅ Fallback rules found (%d ms):\n", (t1 - t0));
+                System.out.printf(" Fallback rules found (%d ms):\n", (t1 - t0));
                 System.out.println(out);
             } else {
-                System.out.println("❌ No association rules found even with relaxed constraints.");
+                System.out.println(" No association rules found even with relaxed constraints.");
             }
         } catch (Exception e) {
-            System.out.println("❌ Fallback rule mining failed: " + e.getMessage());
+            System.out.println(" Fallback rule mining failed: " + e.getMessage());
         }
     }
 

@@ -150,7 +150,7 @@ public final class SupervisedTrainer {
                 }
                 
             } catch (Exception model_error) {
-                System.out.println("❌ Error training " + names.get(i) + ": " + model_error.getMessage());
+                System.out.println(" Error training " + names.get(i) + ": " + model_error.getMessage());
                 System.out.println(" Error training " + names.get(i) + ": " + model_error.getMessage());
                 // Don't print stack trace for known issues like "cannot handle numeric class"
                 if (!model_error.getMessage().contains("Cannot handle numeric class")) {
@@ -161,7 +161,7 @@ public final class SupervisedTrainer {
 
         // Select best model
         if (bestScore == (isClassification ? -1 : Double.MAX_VALUE)) {
-            System.out.println("\n⚠️ No valid models found. Using first available model as fallback.");
+            System.out.println("\n No valid models found. Using first available model as fallback.");
             System.out.println("\n No valid models found. Using first available model as fallback.");
             bestIdx = 0;
         }
@@ -179,18 +179,18 @@ public final class SupervisedTrainer {
         
         try {
             best.buildClassifier(data);
-            System.out.println("✅ Best model trained successfully on full dataset");
+            System.out.println(" Best model trained successfully on full dataset");
         } catch (Exception training_error) {
-            System.out.println("❌ Error training best model: " + training_error.getMessage());
+            System.out.println(" Error training best model: " + training_error.getMessage());
             throw training_error;
         }
 
         // Persist model
         try {
             weka.core.SerializationHelper.write(Config.MODEL_PATH, best);
-            System.out.println("✅ Model saved → " + Config.MODEL_PATH);
+            System.out.println(" Model saved → " + Config.MODEL_PATH);
         } catch (Exception save_error) {
-            System.out.println("⚠️ Error saving model: " + save_error.getMessage());
+            System.out.println(" Error saving model: " + save_error.getMessage());
         }
 
         // Test model loading
@@ -281,15 +281,15 @@ public final class SupervisedTrainer {
                 
                 if (data.classAttribute().isNominal() && pred >= 0 && pred < data.classAttribute().numValues()) {
                     String label = data.classAttribute().value((int) pred);
-                    System.out.println("✅ Model reloaded → first instance prediction: " + label);
+                    System.out.println(" Model reloaded → first instance prediction: " + label);
                 } else {
-                    System.out.printf("✅ Model reloaded → first instance prediction: %.4f\n", pred);
+                    System.out.printf(" Model reloaded → first instance prediction: %.4f\n", pred);
                 }
             } else {
-                System.out.println("✅ Model reloaded successfully (no test instances)");
+                System.out.println(" Model reloaded successfully (no test instances)");
             }
         } catch (Exception reload_error) {
-            System.out.println("⚠️ Error testing model reload: " + reload_error.getMessage());
+            System.out.println(" Error testing model reload: " + reload_error.getMessage());
         }
     }
 }
