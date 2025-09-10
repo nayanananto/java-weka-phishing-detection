@@ -112,7 +112,7 @@ System.out.println(apr.toString());
 
         // Optional downsampling ONLY for general rules
         if (d.numInstances() > 5000) {
-            d.randomize(new Random(SEED));
+            d.stratify(2);
             int sampleSize = Math.min(3000, d.numInstances());
             d = new Instances(d, 0, sampleSize);
             System.out.println("Sampled " + sampleSize + " instances for faster processing");
