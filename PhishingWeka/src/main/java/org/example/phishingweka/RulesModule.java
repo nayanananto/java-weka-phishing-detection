@@ -13,6 +13,7 @@ import weka.filters.unsupervised.attribute.Reorder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import weka.filters.supervised.instance.Resample;
 import weka.filters.unsupervised.attribute.RenameAttribute;
 
 /**
@@ -106,19 +107,23 @@ System.out.println(apr.toString());
 
     private static void mineGeneralAssociationRules(Instances data) throws Exception {
         System.out.println("\n=== GENERAL ASSOCIATION RULES (Fast Mode) ===");
-        System.out.println("Mining relationships between features (class removed)");
+        System.out.println("Mining relationships between features ");
 
         Instances d = new Instances(data);
 
         // Optional downsampling ONLY for general rules
         if (d.numInstances() > 5000) {
-            d.stratify(2);
-            int sampleSize = Math.min(3000, d.numInstances());
-            d = new Instances(d, 0, sampleSize);
-            System.out.println("Sampled " + sampleSize + " instances for faster processing");
+            Resample resample = new Resample();
+            resample.setNoReplacement(true); // without replacement
+            resample.setBiasToUniformClass(1.0); // maintain class balance
+            resample.setSampleSizePercent(60); // sample 60% of data
+            resample.setRandomSeed(SEED);
+            resample.setInputFormat(d);
+            d = Filter.useFilter(d, resample);
+            System.out.println("Balanced sampling done, instances: " + d.numInstances());
         }
 
-        // Remove class if present
+        //Remove class if present
         if (d.classIndex() >= 0) {
             Remove rm = new Remove();
             rm.setAttributeIndices(String.valueOf(d.classIndex() + 1));
@@ -169,7 +174,7 @@ System.out.println(apr.toString());
 
                 String out = ap.toString();
                 if (hasAnyRule(out)) {
-                    System.out.printf("\n✅ General Association Rules (mined in %d ms):\n", (t1 - t0));
+                    System.out.printf("\n General Association Rules (mined in %d ms):\n", (t1 - t0));
                     System.out.println(out);
                     ok = true;
                     break;
