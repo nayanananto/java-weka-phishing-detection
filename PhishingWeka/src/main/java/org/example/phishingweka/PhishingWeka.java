@@ -59,7 +59,7 @@ public static void main(String[] args) throws Exception {
         System.out.printf("Imbalance ratio: %.2f (expected: ~1.0 for 50-50 split)\n", ratio);
         
         if (ratio > 2.0) {
-            System.out.println("⚠️ WARNING: Raw data shows high imbalance! Expected 50-50 split not found.");
+            System.out.println(" WARNING: Raw data shows high imbalance! Expected 50-50 split not found.");
         }
     }
     
@@ -82,7 +82,7 @@ public static void main(String[] args) throws Exception {
     // Continue with original pipeline only if data looks reasonable
     boolean dataLooksGood = checkDataSanity(data, raw);
     if (!dataLooksGood) {
-        System.out.println("\n❌ DATA QUALITY ISSUES DETECTED - STOPPING EXECUTION");
+        System.out.println("\n DATA QUALITY ISSUES DETECTED - STOPPING EXECUTION");
         System.out.println("Please fix preprocessing issues before continuing.");
         return;
     }
@@ -92,7 +92,7 @@ public static void main(String[] args) throws Exception {
     ClusterModule.runKMeans(data);
     RulesModule.mine(data);
     
-    System.out.println("\nAll done ✅");
+    System.out.println("\nAll done ");
 }
 
 // Helper method to check data sanity
@@ -104,7 +104,7 @@ private static boolean checkDataSanity(Instances processed, Instances raw) {
     // Check 1: Instance count shouldn't change dramatically (unless SMOTE applied)
     double instanceRatio = (double) processed.numInstances() / raw.numInstances();
     if (instanceRatio < 0.5 || instanceRatio > 3.0) {
-        System.out.printf("⚠️ Instance count changed dramatically: %.2fx\n", instanceRatio);
+        System.out.printf(" Instance count changed dramatically: %.2fx\n", instanceRatio);
         if (!Config.USE_SMOTE) {
             sane = false;
         }
@@ -118,21 +118,21 @@ private static boolean checkDataSanity(Instances processed, Instances raw) {
         double ratio = (double) max / min;
         
         if (ratio > 50.0) {
-            System.out.printf("❌ Extreme class imbalance: %.1f:1\n", ratio);
+            System.out.printf(" Extreme class imbalance: %.1f:1\n", ratio);
             sane = false;
         } else if (ratio > 10.0) {
-            System.out.printf("⚠️ High class imbalance: %.1f:1\n", ratio);
+            System.out.printf(" High class imbalance: %.1f:1\n", ratio);
         }
     }
     
     // Check 3: Class attribute should exist
     if (processed.classIndex() == -1) {
-        System.out.println("❌ No class attribute found in processed data");
+        System.out.println("No class attribute found in processed data");
         sane = false;
     }
     
     if (sane) {
-        System.out.println("✅ Data passes sanity checks");
+        System.out.println(" Data passes sanity checks");
     }
     
     return sane;

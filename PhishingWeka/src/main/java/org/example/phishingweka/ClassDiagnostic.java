@@ -16,13 +16,13 @@ public final class ClassDiagnostic {
         System.out.println("\n=== COMPREHENSIVE CLASS ATTRIBUTE ANALYSIS ===");
         
         if (data == null || data.numInstances() == 0) {
-            System.out.println("❌ No data to analyze");
+            System.out.println(" No data to analyze");
             return;
         }
 
         Attribute classAttr = data.classAttribute();
         if (classAttr == null) {
-            System.out.println("❌ No class attribute found");
+            System.out.println(" No class attribute found");
             System.out.println("Class index: " + data.classIndex());
             return;
         }
@@ -39,7 +39,7 @@ public final class ClassDiagnostic {
         } else if (classAttr.isNumeric()) {
             analyzeNumericClass(data, classAttr);
         } else {
-            System.out.println("❓ Unknown attribute type");
+            System.out.println(" Unknown attribute type");
         }
 
         // Check for missing values
@@ -88,11 +88,11 @@ public final class ClassDiagnostic {
                 double ratio = (double) max / min;
                 System.out.printf("Class imbalance ratio: %.2f:1", ratio);
                 if (ratio > 3.0) {
-                    System.out.println(" (⚠️ Highly imbalanced)");
+                    System.out.println(" ( Highly imbalanced)");
                 } else if (ratio > 1.5) {
-                    System.out.println(" (⚠️ Moderately imbalanced)");
+                    System.out.println(" ( Moderately imbalanced)");
                 } else {
-                    System.out.println(" (✅ Well balanced)");
+                    System.out.println(" ( Well balanced)");
                 }
             }
         }
@@ -112,7 +112,7 @@ public final class ClassDiagnostic {
         }
 
         if (values.isEmpty()) {
-            System.out.println("❌ No valid class values found");
+            System.out.println(" No valid class values found");
             return;
         }
 
@@ -155,7 +155,7 @@ public final class ClassDiagnostic {
             
             if (allIntegers && (binary || smallRange)) {
                 looksLikeClassification = true;
-                System.out.println("⚠️ This looks like classification data disguised as numeric!");
+                System.out.println(" This looks like classification data disguised as numeric!");
                 System.out.println("   - All values are integers: " + allIntegers);
                 System.out.println("   - Binary classification: " + binary);
                 System.out.println("   - Small range: " + smallRange);
@@ -171,7 +171,7 @@ public final class ClassDiagnostic {
         System.out.println("   SMO: NOT compatible (requires nominal class)");
         
         if (looksLikeClassification) {
-            System.out.println("\n💡 RECOMMENDATION: Convert to nominal for full classifier compatibility");
+            System.out.println("\n RECOMMENDATION: Convert to nominal for full classifier compatibility");
         }
     }
 
@@ -187,13 +187,15 @@ public final class ClassDiagnostic {
         
         if (missingCount > 0) {
             double percentage = 100.0 * missingCount / data.numInstances();
-            System.out.printf("❌ Missing class values: %d (%.1f%%)\n", missingCount, percentage);
+            System.out.printf(" Missing class values: %d (%.1f%%)\n", missingCount, percentage);
             
             if (percentage > 5.0) {
                 System.out.println("⚠️ High percentage of missing class values detected!");
+                System.out.println(" High percentage of missing class values detected!");
             }
         } else {
             System.out.println("✅ No missing class values found");
+            System.out.println(" No missing class values found");
         }
     }
 
@@ -228,7 +230,7 @@ public final class ClassDiagnostic {
                 System.out.println("   - May lose information");
             }
         } else {
-            System.out.println("✅ Class attribute is properly configured for classification");
+            System.out.println(" Class attribute is properly configured for classification");
             
             // Check for class imbalance
             int[] counts = data.attributeStats(data.classIndex()).nominalCounts;
@@ -236,7 +238,7 @@ public final class ClassDiagnostic {
                 int min = Math.min(counts[0], counts[1]);
                 int max = Math.max(counts[0], counts[1]);
                 if (min > 0 && (double) max / min > 3.0) {
-                    System.out.println("⚠️ Consider addressing class imbalance:");
+                    System.out.println(" Consider addressing class imbalance:");
                     System.out.println("   - Enable SMOTE in Config.java");
                     System.out.println("   - Use cost-sensitive learning");
                     System.out.println("   - Try ensemble methods");
@@ -289,7 +291,7 @@ public final class ClassDiagnostic {
      */
     public static void quickClassSummary(Instances data) {
         if (data == null || data.classAttribute() == null) {
-            System.out.println("❌ No valid class attribute");
+            System.out.println(" No valid class attribute");
             return;
         }
         

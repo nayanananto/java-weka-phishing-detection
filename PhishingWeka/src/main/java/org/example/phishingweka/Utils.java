@@ -7,7 +7,7 @@ public final class Utils {
 
     public static void printFirstValues(Instances data) {
         if (data == null || data.numInstances() == 0) {
-            System.out.println("⚠️  No data to preview");
+            System.out.println("  No data to preview");
             return;
         }
         
@@ -47,21 +47,21 @@ public final class Utils {
      */
     public static int pickPositiveIndex(Instances data) {
         if (data == null || data.classAttribute() == null) {
-            System.out.println("⚠️  Invalid data or class attribute");
+            System.out.println("  Invalid data or class attribute");
             return 0;
         }
         
         Attribute classAttr = data.classAttribute();
         
         if (!classAttr.isNominal()) {
-            System.out.println("⚠️  Class attribute is not nominal, using index 0");
+            System.out.println("  Class attribute is not nominal, using index 0");
             return 0;
         }
         
         int numClasses = classAttr.numValues();
         
         if (numClasses < 2) {
-            System.out.println("⚠️  Less than 2 classes found, using index 0");
+            System.out.println("  Less than 2 classes found, using index 0");
             return 0;
         }
         
@@ -79,7 +79,7 @@ public final class Utils {
                 className.equals("bad") || className.equals("positive") ||
                 className.equals("1") || className.equals("yes") ||
                 className.equals("fraud") || className.equals("spam")) {
-                System.out.println("✅ Positive class detected by name: [" + i + "] " + classAttr.value(i));
+                System.out.println(" Positive class detected by name: [" + i + "] " + classAttr.value(i));
                 return i;
             }
         }
@@ -98,26 +98,26 @@ public final class Utils {
                 
                 // Use minority class as positive (common in imbalanced datasets)
                 if (counts[0] < counts[1]) {
-                    System.out.println("✅ Using minority class as positive: [0] " + classAttr.value(0));
+                    System.out.println(" Using minority class as positive: [0] " + classAttr.value(0));
                     return 0;
                 } else if (counts[1] < counts[0]) {
-                    System.out.println("✅ Using minority class as positive: [1] " + classAttr.value(1));
+                    System.out.println(" Using minority class as positive: [1] " + classAttr.value(1));
                     return 1;
                 }
             } catch (Exception e) {
-                System.out.println("⚠️  Error getting class counts: " + e.getMessage());
+                System.out.println("  Error getting class counts: " + e.getMessage());
             }
         }
         
         // Method 3: Convention-based fallback
         if (numClasses == 2) {
-            System.out.println("⚠️  Using convention: index 1 as positive class");
+            System.out.println("  Using convention: index 1 as positive class");
             return 1; // Standard convention: 0=negative, 1=positive
         }
         
         // Method 4: Multi-class fallback  
         int defaultIndex = numClasses - 1;
-        System.out.println("⚠️  Multi-class fallback: using last class [" + defaultIndex + "] as positive");
+        System.out.println("  Multi-class fallback: using last class [" + defaultIndex + "] as positive");
         return defaultIndex;
     }
 

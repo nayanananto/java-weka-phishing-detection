@@ -34,6 +34,46 @@ public final class RulesModule {
      */
     private static void mineClassAssociationRules(Instances data) throws Exception {
         System.out.println("\n=== CLASS ASSOCIATION RULES (CAR) ===");
+<<<<<<< Updated upstream
+=======
+
+        // 1) Force class to be 'status' (or 'cls_label') and move to last
+        Instances d = forceLabelAsClass(data);
+        System.out.printf("Target attribute for CAR: %s (index=%d of %d)\n",
+                d.classAttribute().name(), d.classIndex(), d.numAttributes());
+
+        // Optional: keep a focused subset (class is kept automatically)
+        d = keepImportantPlusClass(d, IMPORTANT_FEATURES);
+
+        // Ensure class is last after keep-list
+        d = moveClassToLast(d);
+
+        // 2) Discretize ONLY non-class attributes
+        d = discretizeIgnoreClass(d, DISC_BINS_CAR);
+
+        // Quick visibility of class counts to confirm 50:50 remains
+        printClassCounts(d);
+
+        System.out.println("Data prepared for CAR: " + d.numInstances() + " instances, " + d.numAttributes() + " attributes");
+
+        boolean metTarget = false;
+        String clsName = d.classAttribute().name();
+        String phishingRHS = clsName + "=phishing";
+
+        // 3) Primary sweep (support x confidence)
+        Apriori apr = new Apriori();
+        apr.setCar(true);
+        apr.setMinMetric(0.9);          // confidence threshold
+        apr.setLowerBoundMinSupport(0.05); // support threshold
+        apr.setNumRules(10);           // maximum number of rules
+        apr.setDelta(0.01);
+
+        apr.buildAssociations(d);
+        System.out.println(apr.toString());
+
+
+       
+>>>>>>> Stashed changes
         
         Instances carData = new Instances(data);
         String targetAttr = carData.classAttribute().name();
@@ -282,6 +322,7 @@ public final class RulesModule {
                     System.out.println("Timeout reached, trying next configuration...");
                     continue;
                 }
+<<<<<<< Updated upstream
                 
                 long endTime = System.currentTimeMillis();
                 long elapsedTime = endTime - startTime;
@@ -292,6 +333,15 @@ public final class RulesModule {
                     System.out.println("Relationships between features:\n");
                     System.out.println(rulesOutput);
                     foundRules = true;
+=======
+                long t1 = System.currentTimeMillis();
+
+                String out = ap.toString();
+                if (hasAnyRule(out)) {
+                    System.out.printf("\n General Association Rules (mined in %d ms):\n", (t1 - t0));
+                    System.out.println(out);
+                    ok = true;
+>>>>>>> Stashed changes
                     break;
                 } else {
                     System.out.println("No rules found with this configuration, trying next...");
@@ -413,12 +463,16 @@ public final class RulesModule {
                 System.out.printf("✅ Fallback rules found (%d ms):\n", (endTime - startTime));
                 System.out.println(output);
             } else {
+<<<<<<< Updated upstream
                 System.out.println("❌ No association rules found even with relaxed constraints");
                 System.out.println("Dataset may be too sparse or need different preprocessing");
+=======
+                System.out.println(" No association rules found even with relaxed constraints.");
+>>>>>>> Stashed changes
             }
             
         } catch (Exception e) {
-            System.out.println("❌ Fallback rule mining failed: " + e.getMessage());
+            System.out.println(" Fallback rule mining failed: " + e.getMessage());
         }
     }
 }

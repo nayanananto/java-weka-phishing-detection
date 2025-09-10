@@ -10,10 +10,8 @@ import weka.filters.unsupervised.attribute.RemoveUseless;
 import weka.filters.unsupervised.attribute.Normalize;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 import weka.filters.unsupervised.attribute.NumericToNominal;
-//import weka.filters.supervised.instance.SMOTE;
 
 import java.io.File;
-import java.util.ArrayList;
 
 public final class DataPrep {
     private DataPrep() {}
@@ -77,7 +75,7 @@ public final class DataPrep {
         System.out.println("Class index: " + data.classIndex());
         
         if (data.classIndex() == -1) {
-            System.out.println("❌ No class attribute set!");
+            System.out.println(" No class attribute set!");
             return;
         }
         
@@ -113,7 +111,7 @@ public final class DataPrep {
         System.out.println("Current type: " + (data.classAttribute().isNominal() ? "Nominal" : "Numeric"));
         
         if (data.classAttribute().isNumeric()) {
-            System.out.println("⚠️ Class attribute is numeric - converting to nominal for classification");
+            System.out.println(" Class attribute is numeric - converting to nominal for classification");
             
             // Check unique values to ensure it's actually categorical
             java.util.Set<Double> uniqueValues = new java.util.HashSet<>();
@@ -136,7 +134,7 @@ public final class DataPrep {
                 data = Filter.useFilter(data, numToNom);
                 data.setClassIndex(data.numAttributes() - 1); // Restore class index
                 
-                System.out.println("✅ Class attribute converted to nominal");
+                System.out.println(" Class attribute converted to nominal");
                 System.out.println("New class values:");
                 for (int i = 0; i < data.classAttribute().numValues(); i++) {
                     System.out.println("  [" + i + "] " + data.classAttribute().value(i));
@@ -146,7 +144,7 @@ public final class DataPrep {
                 System.out.println("Keeping as numeric - only RandomForest will work");
             }
         } else {
-            System.out.println("✅ Class attribute is already nominal");
+            System.out.println(" Class attribute is already nominal");
             System.out.println("Class values:");
             for (int i = 0; i < data.classAttribute().numValues(); i++) {
                 System.out.println("  [" + i + "] " + data.classAttribute().value(i));
